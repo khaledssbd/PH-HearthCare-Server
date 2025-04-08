@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createAdmin = async (data: any) => {
   const hashedPassword: string = await bcrypt.hash(
     data.password,
