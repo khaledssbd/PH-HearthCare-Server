@@ -1,8 +1,7 @@
-import { PrismaClient, UserRole } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 import config from '../../config';
 import bcrypt from 'bcrypt';
-
-const prisma = new PrismaClient();
+import prisma from '../../../shared/prisma';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createAdmin = async (data: any) => {
