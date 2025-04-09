@@ -7,10 +7,11 @@ const getAllAdminFromDB = async (
   params: Record<string, unknown>,
   pagiOptions: Record<string, unknown>
 ) => {
-  const { searchTerm, ...filterdata } = params;
+  const { searchTerm, ...filterData } = params;
   const { limit, page, sortBy, sortOrder } = calculatePagination(pagiOptions);
   const andCondition: Prisma.AdminWhereInput[] = [];
 
+  // handle all searchTerm here by OR
   if (searchTerm) {
     andCondition.push({
       OR: adminSearchableFields.map((field) => ({
@@ -22,10 +23,11 @@ const getAllAdminFromDB = async (
     });
   }
 
-  if (Object.keys(filterdata).length > 0) {
+  // handle all filterdata here by AND
+  if (Object.keys(filterData).length > 0) {
     andCondition.push({
-      AND: Object.keys(filterdata).map((key) => ({
-        [key]: { equals: filterdata[key] },
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: { equals: filterData[key] },
       })),
     });
   }
@@ -37,6 +39,9 @@ const getAllAdminFromDB = async (
     skip: (page - 1) * Number(limit),
     take: Number(limit),
     orderBy: { [sortBy]: sortOrder },
+    // orderBy:
+    //   sortBy && sortOrder ? { [sortBy as string]: sortOrder }
+    //     : { createdAt: 'desc' },
   });
 
   return result;
