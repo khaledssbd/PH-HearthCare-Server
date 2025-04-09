@@ -38,8 +38,7 @@ const getAllAdminFromDB = async (
     take: Number(limit),
     orderBy: { [sortBy]: sortOrder },
     // orderBy:
-    //   sortBy && sortOrder
-    //     ? { [sortBy as string]: sortOrder }
+    //   sortBy && sortOrder ? { [sortBy as string]: sortOrder }
     //     : { createdAt: 'desc' },
   });
 
