@@ -4,6 +4,8 @@ import { calculatePagination } from '../../../helpers/paginationHelper';
 import prisma from '../../../shared/prisma';
 import { IAdminFilterRequest } from './admin.interface';
 import { TPaginationOptions } from '../../interfaces/pagination';
+import AppError from '../../errors/AppError';
+import { StatusCodes } from 'http-status-codes';
 
 // getAllAdminFromDB
 const getAllAdminFromDB = async (
@@ -76,6 +78,10 @@ const getAdminByIdFromDB = async (id: string): Promise<Admin | null> => {
       isDeleted: false,
     },
   });
+
+  if (!result) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Admin not found!');
+  }
 
   return result;
 };

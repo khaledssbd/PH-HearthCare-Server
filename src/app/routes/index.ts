@@ -15,47 +15,47 @@ const moduleRoutes = [
   },
   // {
   //   path: '/auth',
-  //   route: AuthRoutes,
+  //   route: authRoutes,
   // },
   // {
   //   path: '/specialties',
-  //   route: SpecialtiesRoutes,
+  //   route: specialtiesRoutes,
   // },
   // {
   //   path: '/doctor',
-  //   route: DoctorRoutes,
+  //   route: doctorRoutes,
   // },
   // {
   //   path: '/patient',
-  //   route: PatientRoutes,
+  //   route: patientRoutes,
   // },
   // {
   //   path: '/schedule',
-  //   route: ScheduleRoutes,
+  //   route: scheduleRoutes,
   // },
   // {
   //   path: '/doctor-schedule',
-  //   route: DoctorScheduleRoutes,
+  //   route: doctorScheduleRoutes,
   // },
   // {
   //   path: '/appointment',
-  //   route: AppointmentRoutes,
+  //   route: appointmentRoutes,
   // },
   // {
   //   path: '/payment',
-  //   route: PaymentRoutes,
+  //   route: paymentRoutes,
   // },
   // {
   //   path: '/prescription',
-  //   route: PrescriptionRoutes,
+  //   route: prescriptionRoutes,
   // },
   // {
   //   path: '/review',
-  //   route: ReviewRoutes,
+  //   route: reviewRoutes,
   // },
   // {
   //   path: '/meta',
-  //   route: MetaRoutes,
+  //   route: metaRoutes,
   // },
 ];
 

@@ -7,7 +7,7 @@ type TMeta = {
   // totalPage: number;
 };
 
-type TResponse<T> = {
+type TResponseData<T> = {
   statusCode: number;
   success: boolean;
   message?: string;
@@ -15,7 +15,7 @@ type TResponse<T> = {
   data: T | null | undefined;
 };
 
-const sendResponse = <T>(res: Response, data: TResponse<T>) => {
+const sendResponse = <T>(res: Response, data: TResponseData<T>) => {
   res.status(data.statusCode).json({
     success: data.success,
     message: data.message,

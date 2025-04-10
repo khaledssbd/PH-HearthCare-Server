@@ -6,54 +6,40 @@ import { adminFilterableFields } from './admin.constant';
 import { paginationFields } from '../../../helpers/paginationHelper';
 import sendResponse from '../../../shared/sendResponse';
 import { StatusCodes } from 'http-status-codes';
+import tryCatchAsync from '../../utils/tryCatchAsync';
 
 // getAllAdmin
-const getAllAdmin = async (req: Request, res: Response) => {
-  try {
-    const filters = pick(req.query, adminFilterableFields);
-    const paginationOptions = pick(req.query, paginationFields);
-    const result = await adminService.getAllAdminFromDB(
-      filters,
-      paginationOptions
-    );
+const getAllAdmin = tryCatchAsync(async (req: Request, res: Response) => {
+  const filters = pick(req.query, adminFilterableFields);
+  const paginationOptions = pick(req.query, paginationFields);
 
-    sendResponse(res, {
-      statusCode: StatusCodes.OK,
-      success: true,
-      message: 'Admins fetched successfully!',
-      data: result.data,
-      meta: result.meta,
-    });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err?.name || 'Something went wrong!',
-      error: err,
-    });
-  }
-};
+  const result = await adminService.getAllAdminFromDB(
+    filters,
+    paginationOptions
+  );
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Admins fetched successfully!',
+    data: result.data,
+    meta: result.meta,
+  });
+});
 
 // getAdminById
-const getAdminById = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
+const getAdminById = tryCatchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-    const result = await adminService.getAdminByIdFromDB(id);
+  const result = await adminService.getAdminByIdFromDB(id);
 
-    sendResponse(res, {
-      statusCode: StatusCodes.OK,
-      success: true,
-      message: 'Admin fetched successfully!',
-      data: result,
-    });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err?.name || 'Something went wrong!',
-      error: err,
-    });
-  }
-};
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Admin fetched successfully!',
+    data: result,
+  });
+});
 
 // updateAdmin
 const updateAdmin = async (req: Request, res: Response) => {
