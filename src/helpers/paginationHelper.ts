@@ -1,19 +1,8 @@
-type TOptions = {
-  page?: string;
-  limit?: string;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-};
+import { TPaginationOptions, TPaginationReturn } from "../app/interfaces/pagination";
 
-type TPagiReturn = {
-  page: number;
-  limit: number;
-  skip: number;
-  sortBy: string;
-  sortOrder: 'asc' | 'desc';
-};
-
-export const calculatePagination = (options: TOptions): TPagiReturn => {
+export const calculatePagination = (
+  options: TPaginationOptions
+): TPaginationReturn => {
   const page: number = Number(options.page) || 1;
   const limit: number = Number(options.limit) || 10;
   const skip: number = (page - 1) * limit;
@@ -23,5 +12,8 @@ export const calculatePagination = (options: TOptions): TPagiReturn => {
   return { page, limit, skip, sortBy, sortOrder };
 };
 
-
 export const paginationFields = ['limit', 'page', 'sortBy', 'sortOrder'];
+
+// export const paginationHelper = {
+//   calculatePagination,
+// };

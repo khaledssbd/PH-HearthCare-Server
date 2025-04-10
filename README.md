@@ -42,7 +42,7 @@ This repository contains the backend codebase responsible for handling server-si
 5. Start the server: `npm run dev`
 
 
-### API Documentation: [POSTMAN API DOCUMENTATION (Click Here)](https://documenter.getpostman.com/view/26694209/2sA2xjyWRv)
+### API Documentation: [POSTMAN API DOCUMENTATION (Click Here)](https://.postman.co/workspace/My-Workspace~944f04b1-ecb8-4ce0-80b2-c8ca337b5d94/collection/39774961-6b3fb6e4-a122-4281-b52e-4a5a0a0bf1ea?action=share&creator=39774961)
 
 ---
 
