@@ -22,7 +22,7 @@ const getAllAdminFromDB = async (
           contains: searchTerm,
           mode: 'insensitive',
         },
-        isDeleted: false, // now showing all
+        // isDeleted: false, // now showing all
       })),
     });
   }
@@ -32,7 +32,7 @@ const getAllAdminFromDB = async (
     andCondition.push({
       AND: Object.keys(filterData).map((key) => ({
         [key]: { equals: filterData[key as keyof typeof filterData] },
-        isDeleted: false, // now showing all
+        // isDeleted: false, // now showing all
       })),
     });
   }
