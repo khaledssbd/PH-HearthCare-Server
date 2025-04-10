@@ -131,8 +131,6 @@ const deleteAdminFromDB = async (id: string): Promise<Admin | null> => {
   return result;
 };
 
-
-
 // softDeleteAdminFromDB
 const softDeleteAdminFromDB = async (id: string): Promise<Admin | null> => {
   await prisma.admin.findUniqueOrThrow({
@@ -166,8 +164,6 @@ const softDeleteAdminFromDB = async (id: string): Promise<Admin | null> => {
 
   return result;
 };
-
-
 
 export const adminService = {
   getAllAdminFromDB,
