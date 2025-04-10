@@ -22,3 +22,6 @@ export const calculatePagination = (options: TOptions): TPagiReturn => {
   const sortOrder: 'asc' | 'desc' = options.sortOrder || 'desc';
   return { page, limit, skip, sortBy, sortOrder };
 };
+
+
+export const paginationFields = ['limit', 'page', 'sortBy', 'sortOrder'];

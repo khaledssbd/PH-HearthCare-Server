@@ -5,13 +5,15 @@ import prisma from '../../../shared/prisma';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createAdmin = async (data: any) => {
+  const { password, admin } = data;
+
   const hashedPassword: string = await bcrypt.hash(
-    data.password,
-    config.bcrypt_salt_rounds as string
+    password,
+    Number(config.bcrypt_salt_rounds)
   );
 
   const userData = {
-    email: data.admin.email,
+    email: admin.email,
     password: hashedPassword,
     role: UserRole.ADMIN,
   };
@@ -22,7 +24,7 @@ const createAdmin = async (data: any) => {
     });
 
     const createdAdminData = await transectionClient.admin.create({
-      data: data.admin,
+      data: admin,
     });
 
     return createdAdminData;
