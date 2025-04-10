@@ -12,35 +12,37 @@ const getAllAdminFromDB = async (
 ) => {
   const { searchTerm, ...filterData } = params;
   const { limit, page, sortBy, sortOrder } = calculatePagination(pagiOptions);
-  const andCondition: Prisma.AdminWhereInput[] = [];
+  const andConditions: Prisma.AdminWhereInput[] = [];
 
   // handle all searchTerm here by OR
   if (searchTerm) {
-    andCondition.push({
+    andConditions.push({
       OR: adminSearchableFields.map((field) => ({
         [field]: {
           contains: searchTerm,
           mode: 'insensitive',
         },
-        // isDeleted: false, // now showing all
       })),
     });
   }
 
   // handle all filterdata here by AND
   if (Object.keys(filterData).length > 0) {
-    andCondition.push({
+    andConditions.push({
       AND: Object.keys(filterData).map((key) => ({
         [key]: { equals: filterData[key as keyof typeof filterData] },
-        // isDeleted: false, // now showing all
       })),
     });
   }
 
-  const whereCondition: Prisma.AdminWhereInput = { AND: andCondition };
+  andConditions.push({
+    isDeleted: false,
+  });
+
+  const whereConditions: Prisma.AdminWhereInput = { AND: andConditions };
 
   const result = await prisma.admin.findMany({
-    where: whereCondition,
+    where: whereConditions,
     skip: (page - 1) * Number(limit),
     take: Number(limit),
     orderBy: { [sortBy]: sortOrder },
@@ -50,7 +52,7 @@ const getAllAdminFromDB = async (
   });
 
   const total = await prisma.admin.count({
-    where: whereCondition,
+    where: whereConditions,
   });
 
   // const totalPage = Math.ceil(total / limit);
@@ -131,8 +133,6 @@ const deleteAdminFromDB = async (id: string): Promise<Admin | null> => {
   return result;
 };
 
-
-
 // softDeleteAdminFromDB
 const softDeleteAdminFromDB = async (id: string): Promise<Admin | null> => {
   await prisma.admin.findUniqueOrThrow({
@@ -166,8 +166,6 @@ const softDeleteAdminFromDB = async (id: string): Promise<Admin | null> => {
 
   return result;
 };
-
-
 
 export const adminService = {
   getAllAdminFromDB,
