@@ -37,6 +37,12 @@ const getAdminById = async (req: Request, res: Response) => {
 
     const result = await adminService.getAdminByIdFromDB(id);
 
+    // sendResponse(res, {
+    //   statusCode: httpStatus.OK,
+    //   success: true,
+    //   message: 'Admin fetched successfully!',
+    //   data: result,
+    // });
     res.status(200).json({
       success: true,
       message: 'Admin fetched successfully!',
@@ -49,15 +55,91 @@ const getAdminById = async (req: Request, res: Response) => {
       error: err,
     });
   }
-  // sendResponse(res, {
-  //   statusCode: httpStatus.OK,
-  //   success: true,
-  //   message: 'Admin data fetched by id!',
-  //   data: result,
-  // });
+};
+
+// updateAdmin
+const updateAdmin = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const result = await adminService.updateAdminIntoDB(id, req.body);
+
+    // sendResponse(res, {
+    //   statusCode: httpStatus.OK,
+    //   success: true,
+    //   message: 'Admin updated successfully!',
+    //   data: result,
+    // });
+    res.status(200).json({
+      success: true,
+      message: 'Admin updated successfully!',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err?.name || 'Something went wrong!',
+      error: err,
+    });
+  }
+};
+
+// deleteAdmin
+const deleteAdmin = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const result = await adminService.deleteAdminFromDB(id);
+    // sendResponse(res, {
+    //   statusCode: StatusCodes.OK,
+    //   success: true,
+    //   message: 'Admin deleted successfully!',
+    //   data: result,
+    // });
+    res.status(200).json({
+      success: true,
+      message: 'Admin deleted successfully!',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err?.name || 'Something went wrong!',
+      error: err,
+    });
+  }
+};
+
+// softDeleteAdmin
+const softDeleteAdmin = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const result = await adminService.softDeleteAdminFromDB(id);
+    // sendResponse(res, {
+    //   statusCode: StatusCodes.OK,
+    //   success: true,
+    //   message: 'Admin deleted successfully!',
+    //   data: result,
+    // });
+    res.status(200).json({
+      success: true,
+      message: 'Admin deleted successfully!',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err?.name || 'Something went wrong!',
+      error: err,
+    });
+  }
 };
 
 export const adminController = {
   getAllAdmin,
   getAdminById,
+  updateAdmin,
+  deleteAdmin,
+  softDeleteAdmin,
 };
