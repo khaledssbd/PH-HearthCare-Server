@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import { adminService } from './admin.service';
 import { pick } from '../../../shared/pick';
@@ -43,67 +42,43 @@ const getAdminById = tryCatchAsync(async (req: Request, res: Response) => {
 
 // updateAdmin
 const updateAdmin = tryCatchAsync(async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    const result = await adminService.updateAdminIntoDB(id, req.body);
+  const result = await adminService.updateAdminIntoDB(id, req.body);
 
-    sendResponse(res, {
-      statusCode: StatusCodes.OK,
-      success: true,
-      message: 'Admin updated successfully!',
-      data: result,
-    });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err?.name || 'Something went wrong!',
-      error: err,
-    });
-  }
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Admin updated successfully!',
+    data: result,
+  });
 });
 
 // deleteAdmin
-const deleteAdmin = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
+const deleteAdmin = tryCatchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-    const result = await adminService.deleteAdminFromDB(id);
-    sendResponse(res, {
-      statusCode: StatusCodes.OK,
-      success: true,
-      message: 'Admin deleted successfully!',
-      data: result,
-    });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err?.name || 'Something went wrong!',
-      error: err,
-    });
-  }
-};
+  const result = await adminService.deleteAdminFromDB(id);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Admin deleted successfully!',
+    data: result,
+  });
+});
 
 // softDeleteAdmin
-const softDeleteAdmin = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
+const softDeleteAdmin = tryCatchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-    const result = await adminService.softDeleteAdminFromDB(id);
-    sendResponse(res, {
-      statusCode: StatusCodes.OK,
-      success: true,
-      message: 'Admin deleted successfully!',
-      data: result,
-    });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err?.name || 'Something went wrong!',
-      error: err,
-    });
-  }
-};
+  const result = await adminService.softDeleteAdminFromDB(id);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Admin deleted successfully!',
+    data: result,
+  });
+});
 
 export const adminController = {
   getAllAdmin,
