@@ -99,7 +99,7 @@ const updateAdminIntoDB = async (
   });
 
   if ('email' in data) {
-    throw new Error('Email cannot be updated!');
+    throw new AppError(StatusCodes.BAD_REQUEST, 'Email cannot be updated!');
   }
 
   const result = await prisma.admin.update({

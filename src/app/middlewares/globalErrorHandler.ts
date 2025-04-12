@@ -220,7 +220,7 @@ export const globalErrorHandler = (
   next: NextFunction
 ): void => {
   let statusCode: number = StatusCodes.INTERNAL_SERVER_ERROR;
-  let message: string = err?.message || 'Internal Server Error';
+  let message: string = err?.message || 'Internal Server Error!';
   let errorSources:
     | { path?: string; message?: string }[]
     | Record<string, unknown>
@@ -267,7 +267,7 @@ export const globalErrorHandler = (
   // Handle Prisma Rust Panic Errors
   if (err instanceof Prisma.PrismaClientRustPanicError) {
     statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
-    message = 'Critical database engine error occurred';
+    message = 'Critical database engine error occurred!';
   }
 
   // Handle Prisma Client Unknown Errors (new in recent versions)
@@ -309,7 +309,7 @@ export const globalErrorHandler = (
 
   // Fallback for unexpected errors
   if (!response?.message) {
-    response.message = 'An unexpected error occurred';
+    response.message = 'An unexpected error occurred!';
   }
 
   errorSources = {

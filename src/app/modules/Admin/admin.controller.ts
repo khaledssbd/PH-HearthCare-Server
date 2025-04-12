@@ -42,7 +42,7 @@ const getAdminById = tryCatchAsync(async (req: Request, res: Response) => {
 });
 
 // updateAdmin
-const updateAdmin = async (req: Request, res: Response) => {
+const updateAdmin = tryCatchAsync(async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -61,7 +61,7 @@ const updateAdmin = async (req: Request, res: Response) => {
       error: err,
     });
   }
-};
+});
 
 // deleteAdmin
 const deleteAdmin = async (req: Request, res: Response) => {
