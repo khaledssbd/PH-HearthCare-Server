@@ -1,5 +1,7 @@
 import express from 'express';
 import { adminController } from './admin.controller';
+import validateRequest from '../../middlewares/validateRequest';
+import { adminValidationSchemas } from './admin.validations';
 
 const router = express.Router();
 
@@ -7,7 +9,11 @@ router.get('/', adminController.getAllAdmin);
 
 router.get('/:id', adminController.getAdminById);
 
-router.patch('/:id', adminController.updateAdmin);
+router.patch(
+  '/:id',
+  validateRequest(adminValidationSchemas.update),
+  adminController.updateAdmin
+);
 
 router.delete('/:id', adminController.deleteAdmin);
 

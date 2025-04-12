@@ -193,7 +193,7 @@ const handlePrismaKnownError = (
         statusCode: StatusCodes.BAD_REQUEST,
         message: `Null constraint violation on: ${err?.meta?.target}`,
       };
-    case 'P2025':
+    case 'P2025': // if id is wrong
       return {
         statusCode: StatusCodes.NOT_FOUND,
         message: (err?.meta?.cause as string) || 'Required record not found',
@@ -233,27 +233,7 @@ export const globalErrorHandler = (
     message,
   };
 
-  // Handle Prisma Client Known Request Errors
-  if (err instanceof Prisma.PrismaClientKnownRequestError) {
-    // code = err?.code;
-    // meta = err?.meta;
-
-    const prismaError = handlePrismaKnownError(err);
-    statusCode = prismaError.statusCode;
-    message = prismaError.message;
-  }
-
-  // Handle Prisma Validation Errors
-  if (err instanceof Prisma.PrismaClientValidationError) {
-    statusCode = StatusCodes.BAD_REQUEST;
-    message = err?.message
-      .split('\n')
-      .filter((line: string) => line.trim().length > 0)
-      .join(' ')
-      .trim();
-  }
-
-  // Handle Prisma Initialization Errors
+  // Handle Prisma Initialization Errors(Client initialize করার সময় সমস্যা হলে)
   if (err instanceof Prisma.PrismaClientInitializationError) {
     statusCode = StatusCodes.SERVICE_UNAVAILABLE;
     message = `Database connection failed: ${err?.message}`;
@@ -264,16 +244,37 @@ export const globalErrorHandler = (
     };
   }
 
-  // Handle Prisma Rust Panic Errors
-  if (err instanceof Prisma.PrismaClientRustPanicError) {
-    statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
-    message = 'Critical database engine error occurred!';
+  // Handle Prisma Client Known Request Errors(Specific error, যেমন unique constraint fail)
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    // code = err?.code;
+    // meta = err?.meta;
+
+    const prismaError = handlePrismaKnownError(err);
+    statusCode = prismaError.statusCode;
+    message = prismaError.message;
   }
 
   // Handle Prisma Client Unknown Errors (new in recent versions)
   if (err instanceof Prisma.PrismaClientUnknownRequestError) {
     statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
     message = `Unknown database error: ${err?.message}`;
+  }
+
+  // Handle Prisma Rust Panic Errors(Rust side এ Prisma panic হলে)
+  if (err instanceof Prisma.PrismaClientRustPanicError) {
+    statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
+    message = 'Critical database engine error occurred!';
+  }
+
+  // Handle Prisma Validation Errors(Client side এ invalid query হলে)
+  if (err instanceof Prisma.PrismaClientValidationError) {
+    statusCode = StatusCodes.BAD_REQUEST;
+    message =
+      err?.message
+        ?.split('\n')
+        .find((line) => line.includes('Unknown argument'))
+        ?.split('Available options')[0]
+        ?.trim() || 'Validation error occurred!';
   }
 
   // Handle Zod-validation error
@@ -294,15 +295,16 @@ export const globalErrorHandler = (
         message: err?.message,
       },
     ];
-  } else if (err instanceof Error) {
-    message = err?.message;
-    errorSources = [
-      {
-        path: '',
-        message: err?.message,
-      },
-    ];
   }
+  // else if (err instanceof Error) {
+  //   message = err?.message;
+  //   errorSources = [
+  //     {
+  //       path: '',
+  //       message: err?.message,
+  //     },
+  //   ];
+  // }
 
   // Update response with final message
   response.message = message;

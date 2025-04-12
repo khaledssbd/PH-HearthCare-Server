@@ -1,6 +1,7 @@
 import { UserRole } from '@prisma/client';
 import prisma from '../src/shared/prisma';
 import * as bcrypt from 'bcrypt';
+import config from './../src/app/config';
 
 const seedSuperAdmin = async () => {
   try {
@@ -11,11 +12,14 @@ const seedSuperAdmin = async () => {
     });
 
     if (isExistSuperAdmin) {
-      console.log('Super admin already exists!');
+      // console.log('Super admin already exists!');
       return;
     }
 
-    const hashedPassword = await bcrypt.hash('superadmin', 12);
+    const hashedPassword = await bcrypt.hash(
+      'superadmin',
+      Number(config.bcrypt_salt_rounds)
+    );
 
     const superAdminData = await prisma.user.create({
       data: {
@@ -32,9 +36,9 @@ const seedSuperAdmin = async () => {
       },
     });
 
-    console.log('Super Admin Created Successfully!', superAdminData);
+    // console.log('Super Admin Created Successfully!', superAdminData);
   } catch (err) {
-    console.error(err);
+    // console.error(err);
   } finally {
     await prisma.$disconnect();
   }
