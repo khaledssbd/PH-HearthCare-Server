@@ -6,10 +6,7 @@ import AppError from '../errors/AppError';
 import tryCatchAsync from '../utils/tryCatchAsync';
 import { jwtHelpers } from '../../helpers/jwtHelpers';
 import { UserRole } from '@prisma/client';
-import {
-  findUserByEmail,
-  isTokenIssuedBeforePasswordChange,
-} from '../../helpers/authHelpers';
+import { findUser, isTokenIssuedBeforePasswordChange} from '../../helpers/authHelpers';
 
 const auth = (...requiredRoles: UserRole[]) => {
   return tryCatchAsync(
@@ -33,7 +30,7 @@ const auth = (...requiredRoles: UserRole[]) => {
       const { role, email, iat } = decoded;
 
       // checking if the user is exist
-      const user = await findUserByEmail(email);
+      const user = await findUser({ email });
       if (!user) {
         throw new AppError(StatusCodes.NOT_FOUND, 'User not found!');
       }

@@ -6,10 +6,10 @@ import { StatusCodes } from 'http-status-codes';
 
 import { JwtPayload } from 'jsonwebtoken';
 
+// loginUser
 const loginUser = tryCatchAsync(async (req: Request, res: Response) => {
-  const result = await AuthServices.loginUser(req.body);
-
-  const { refreshToken } = result;
+  const result = await AuthServices.loginUserIntoDB(req.body);
+  const { accessToken, refreshToken, needPasswordChange } = result;
 
   res.cookie('refreshToken', refreshToken, {
     secure: false,
@@ -21,12 +21,13 @@ const loginUser = tryCatchAsync(async (req: Request, res: Response) => {
     success: true,
     message: 'Logged in successfully!',
     data: {
-      accessToken: result.accessToken,
-      needPasswordChange: result.needPasswordChange,
+      accessToken: accessToken,
+      needPasswordChange: needPasswordChange,
     },
   });
 });
 
+// refreshToken
 const refreshToken = tryCatchAsync(async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
 
@@ -44,6 +45,7 @@ const refreshToken = tryCatchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// changePassword
 const changePassword = tryCatchAsync(
   async (req: Request & { user?: JwtPayload }, res: Response) => {
     const user = req.user;
@@ -59,6 +61,7 @@ const changePassword = tryCatchAsync(
   }
 );
 
+// forgotPassword
 const forgotPassword = tryCatchAsync(async (req: Request, res: Response) => {
   await AuthServices.forgotPassword(req.body);
 
@@ -70,6 +73,7 @@ const forgotPassword = tryCatchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// resetPassword
 const resetPassword = tryCatchAsync(async (req: Request, res: Response) => {
   const token = req.headers.authorization || '';
 

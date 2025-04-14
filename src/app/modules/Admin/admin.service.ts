@@ -91,12 +91,25 @@ const updateAdminIntoDB = async (
   id: string,
   data: Partial<Admin>
 ): Promise<Admin> => {
-  await prisma.admin.findUniqueOrThrow({
+  // await prisma.admin.findUniqueOrThrow({
+  //   where: {
+  //     id,
+  //     isDeleted: false,
+  //   },
+  // });
+
+  const admin = await prisma.admin.findUnique({
     where: {
       id,
-      isDeleted: false,
+      // isDeleted: false,
     },
   });
+  if (!admin) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Account not found!');
+  }
+  if (admin.isDeleted) {
+    throw new AppError(StatusCodes.FORBIDDEN, 'Your account is deleted!');
+  }
 
   if ('email' in data) {
     throw new AppError(StatusCodes.BAD_REQUEST, 'Email cannot be updated!');
@@ -114,11 +127,27 @@ const updateAdminIntoDB = async (
 
 // deleteAdminFromDB
 const deleteAdminFromDB = async (id: string): Promise<Admin | null> => {
-  await prisma.admin.findUniqueOrThrow({
+  // await prisma.admin.findUniqueOrThrow({
+  //   where: {
+  //     id,
+  //   },
+  // });
+
+  const admin = await prisma.admin.findUnique({
     where: {
       id,
+      // isDeleted: false,
     },
   });
+  if (!admin) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Account not found!');
+  }
+  if (admin.isDeleted) {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      'Your account is already deleted!'
+    );
+  }
 
   const result = await prisma.$transaction(async (transactionClient) => {
     const adminDeletedData = await transactionClient.admin.delete({
@@ -141,12 +170,28 @@ const deleteAdminFromDB = async (id: string): Promise<Admin | null> => {
 
 // softDeleteAdminFromDB
 const softDeleteAdminFromDB = async (id: string): Promise<Admin | null> => {
-  await prisma.admin.findUniqueOrThrow({
+  // await prisma.admin.findUniqueOrThrow({
+  //   where: {
+  //     id,
+  //     isDeleted: false,
+  //   },
+  // });
+
+  const admin = await prisma.admin.findUnique({
     where: {
       id,
-      isDeleted: false,
+      // isDeleted: false,
     },
   });
+  if (!admin) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Account not found!');
+  }
+  if (admin.isDeleted) {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      'Your account is already deleted!'
+    );
+  }
 
   const result = await prisma.$transaction(async (transactionClient) => {
     const adminDeletedData = await transactionClient.admin.update({

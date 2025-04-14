@@ -22,6 +22,13 @@ export default {
     mail_service_password: process.env.GOOGLE_MAIL_SERVICE_PASSWORD,
   },
 
+  superAdmin: {
+    name: process.env.SUPER_ADMIN_NAME,
+    email: process.env.SUPER_ADMIN_EMAIL,
+    password: process.env.SUPER_ADMIN_PASSWORD,
+    contact_number: process.env.SUPER_ADMIN_CONTACT_NUMBER,
+  },
+
   jwt: {
     access_secret: process.env.ACCESS_SECRET,
     access_secter_expires_in: process.env.ACCESS_SECRET_EXPIRES_IN,

@@ -1,26 +1,41 @@
-import { UserStatus } from '@prisma/client';
+// import { UserStatus } from '@prisma/client';
 // import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import prisma from '../../../shared/prisma';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { JwtPayload, Secret } from 'jsonwebtoken';
 import emailSender from './emailSender';
 import config from '../../config';
 import AppError from '../../errors/AppError';
 import { StatusCodes } from 'http-status-codes';
 import { jwtHelpers } from '../../../helpers/jwtHelpers';
-import { findUserByEmail, findUserById } from '../../../helpers/authHelpers';
+import { findUser } from '../../../helpers/authHelpers';
 
-const loginUser = async (payload: { email: string; password: string }) => {
-  const userData = await prisma.user.findUniqueOrThrow({
-    where: {
-      email: payload.email,
-      status: UserStatus.ACTIVE,
-    },
-  });
+// loginUserIntoDB
+const loginUserIntoDB = async (payload: {
+  email: string;
+  password: string;
+}) => {
+  // const user = await prisma.user.findUniqueOrThrow({
+  //   where: {
+  //     email: payload.email,
+  //     status: UserStatus.ACTIVE,
+  //   },
+  // });
+
+  const user = await findUser({ email: payload.email });
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found!');
+  }
+  if (user.status === 'DELETED') {
+    throw new AppError(StatusCodes.FORBIDDEN, 'Your account is deleted!');
+  }
+  if (user.status === 'BLOCKED') {
+    throw new AppError(StatusCodes.FORBIDDEN, 'Your account is blocked!');
+  }
 
   const isCorrectPassword: boolean = await bcrypt.compare(
     payload.password,
-    userData.password
+    user.password
   );
 
   if (!isCorrectPassword) {
@@ -28,8 +43,8 @@ const loginUser = async (payload: { email: string; password: string }) => {
   }
   const accessToken = jwtHelpers.createToken(
     {
-      email: userData.email,
-      role: userData.role,
+      email: user.email,
+      role: user.role,
     },
     config.jwt.access_secret as Secret,
     config.jwt.access_secter_expires_in as string
@@ -37,8 +52,8 @@ const loginUser = async (payload: { email: string; password: string }) => {
 
   const refreshToken = jwtHelpers.createToken(
     {
-      email: userData.email,
-      role: userData.role,
+      email: user.email,
+      role: user.role,
     },
     config.jwt.refresh_secret as Secret,
     config.jwt.refresh_secret_expires_in as string
@@ -47,27 +62,39 @@ const loginUser = async (payload: { email: string; password: string }) => {
   return {
     accessToken,
     refreshToken,
-    needPasswordChange: userData.needPasswordChange,
+    needPasswordChange: user.needPasswordChange,
   };
 };
 
+// refreshToken
 const refreshToken = async (token: string) => {
   const decodedData = jwtHelpers.verifyToken(
     token,
     config.jwt.refresh_secret as Secret
   );
 
-  const userData = await prisma.user.findUniqueOrThrow({
-    where: {
-      email: decodedData.email,
-      status: UserStatus.ACTIVE,
-    },
-  });
+  // const user = await prisma.user.findUniqueOrThrow({
+  //   where: {
+  //     email: decodedData.email,
+  //     status: UserStatus.ACTIVE,
+  //   },
+  // });
+
+  const user = await findUser({ email: decodedData.email });
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found!');
+  }
+  if (user.status === 'DELETED') {
+    throw new AppError(StatusCodes.FORBIDDEN, 'Your account is deleted!');
+  }
+  if (user.status === 'BLOCKED') {
+    throw new AppError(StatusCodes.FORBIDDEN, 'Your account is blocked!');
+  }
 
   const accessToken = jwtHelpers.createToken(
     {
-      email: userData.email,
-      role: userData.role,
+      email: user.email,
+      role: user.role,
     },
     config.jwt.access_secret as Secret,
     config.jwt.access_secter_expires_in as string
@@ -75,10 +102,11 @@ const refreshToken = async (token: string) => {
 
   return {
     accessToken,
-    needPasswordChange: userData.needPasswordChange,
+    needPasswordChange: user.needPasswordChange,
   };
 };
 
+// changePassword
 const changePassword = async (
   userData: JwtPayload,
   payload: { oldPassword: string; newPassword: string }
@@ -90,7 +118,7 @@ const changePassword = async (
   //   },
   // });
 
-  const user = await findUserByEmail(userData.email);
+  const user = await findUser({ email: userData.email });
 
   const isCorrectPassword: boolean = await bcrypt.compare(
     payload.oldPassword,
@@ -121,8 +149,9 @@ const changePassword = async (
   };
 };
 
+// forgotPassword
 const forgotPassword = async (payload: { email: string }) => {
-  const user = await findUserByEmail(payload.email);
+  const user = await findUser({ email: payload.email });
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found!');
   }
@@ -167,6 +196,7 @@ const forgotPassword = async (payload: { email: string }) => {
   );
 };
 
+// resetPassword
 const resetPassword = async (
   token: string,
   payload: { id: string; password: string }
@@ -183,7 +213,7 @@ const resetPassword = async (
     throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!');
   }
 
-  const user = await findUserById(payload.id);
+  const user = await findUser({ id: payload.id });
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found!');
   }
@@ -219,7 +249,7 @@ const resetPassword = async (
 };
 
 export const AuthServices = {
-  loginUser,
+  loginUserIntoDB,
   refreshToken,
   changePassword,
   forgotPassword,

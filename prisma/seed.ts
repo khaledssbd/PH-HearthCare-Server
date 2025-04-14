@@ -1,6 +1,6 @@
 import { UserRole } from '@prisma/client';
 import prisma from '../src/shared/prisma';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import config from './../src/app/config';
 
 const seedSuperAdmin = async () => {
@@ -17,26 +17,28 @@ const seedSuperAdmin = async () => {
     }
 
     const hashedPassword = await bcrypt.hash(
-      'superadmin',
+      config.superAdmin.password as string,
       Number(config.bcrypt_salt_rounds)
     );
 
-    const superAdminData = await prisma.user.create({
+    await prisma.user.create({
       data: {
-        email: 'super@admin.com',
+        email: config.superAdmin.email as string,
         password: hashedPassword,
         role: UserRole.SUPER_ADMIN,
         admin: {
           create: {
-            name: 'Super Admin',
-            //email: "super@admin.com",
-            contactNumber: '01234567890',
+            name: config.superAdmin.name as string,
+            //email: config.superAdmin.email as string,
+            contactNumber: config.superAdmin.contact_number as string,
           },
         },
       },
     });
 
     // console.log('Super Admin Created Successfully!', superAdminData);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     // console.error(err);
   } finally {

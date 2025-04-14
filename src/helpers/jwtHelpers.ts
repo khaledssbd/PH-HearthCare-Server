@@ -11,18 +11,18 @@ const createToken = (
   expiresIn: string
 ) => {
   const token = jwt.sign(jwtPayload, secret, {
-    algorithm: 'HS256',
+    algorithm: 'HS256', // default is "HS256"
     expiresIn,
   });
 
   return token;
 };
 
-const verifyToken = (token: string, secret: Secret) => {
+const verifyToken = (token: string, secret: Secret): IAuthUser & JwtPayload => {
   let decoded;
 
   try {
-    decoded = jwt.verify(token, secret) as JwtPayload;
+    decoded = jwt.verify(token, secret) as IAuthUser & JwtPayload;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     throw new AppError(StatusCodes.UNAUTHORIZED, 'Unauthorized!');
