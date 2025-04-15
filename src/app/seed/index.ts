@@ -1,9 +1,9 @@
 import { UserRole } from '@prisma/client';
-import prisma from '../src/shared/prisma';
+import prisma from '../../shared/prisma';
 import bcrypt from 'bcrypt';
-import config from './../src/app/config';
+import config from '../config';
 
-const seedSuperAdmin = async () => {
+export const seedSuperAdmin = async () => {
   try {
     const isExistSuperAdmin = await prisma.user.findFirst({
       where: {
@@ -12,9 +12,10 @@ const seedSuperAdmin = async () => {
     });
 
     if (isExistSuperAdmin) {
-      // console.log('Super admin already exists!');
+      console.log('Super admin already exists!');
       return;
     }
+    console.log('Super admin not exists!');
 
     const hashedPassword = await bcrypt.hash(
       config.superAdmin.password as string,
@@ -45,5 +46,3 @@ const seedSuperAdmin = async () => {
     await prisma.$disconnect();
   }
 };
-
-seedSuperAdmin();

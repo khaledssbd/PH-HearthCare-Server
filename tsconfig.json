@@ -1,5 +1,9 @@
 {
-  "include": ["src/**/*.ts", "src/app/interfaces/sslcommerz-lts.d.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/app/interfaces/sslcommerz-lts.d.ts",
+    "src/app/seed/index.ts"
+  ],
   "exclude": ["node_modules"],
   "compilerOptions": {
     /* Language and Environment */
